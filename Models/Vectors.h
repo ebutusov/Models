@@ -70,6 +70,7 @@ public:
 		case 1: return y;
 		case 2: return z;
 		}
+		return z;
 	}
 
 	inline Vector3d<T>& operator+=(const Vector3d &v)
