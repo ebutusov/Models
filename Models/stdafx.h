@@ -34,10 +34,10 @@ extern CAppModule _Module;
 #include <atlmisc.h>
 #include <atlcoll.h>
 #include <atlddx.h>
-#include <atlopengl.h>
 #include <gl\glu.h>
 //#include <math.h>
 #include <ode/ode.h>
+#include "atlopengl.h"
 #include "Real.h"
 
 #if defined _M_IX86
