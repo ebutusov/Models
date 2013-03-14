@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AboutDlg.h" />
+    <ClInclude Include="atlopengl.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Concept.h" />
     <ClInclude Include="GLRenderer.h" />
