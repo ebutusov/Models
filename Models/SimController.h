@@ -16,9 +16,11 @@ private:
 	CMySimulation m_sim;
 	CModelsView *m_view;
 
+	enum class EInsertKind { insertBox, insertCylinder };
 	bool m_LPM, m_PPM;
 	char m_keys[256];
 	bool m_insert_mode;
+	EInsertKind m_insert_kind;
 	bool m_paused;
 
 	int m_last_frame;

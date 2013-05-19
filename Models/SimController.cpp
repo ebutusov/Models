@@ -6,6 +6,7 @@ CSimController::CSimController(void)
 :m_view(NULL), 
 m_LPM(false), m_PPM(false),
 m_insert_mode(false),
+m_insert_kind(EInsertKind::insertCylinder),
 m_paused(false),
 m_last_frame(0),
 m_start_time(0)
@@ -63,13 +64,27 @@ void CSimController::DoFrame()
 		}
 		else
 		{
-			// put a cylinder
+			// insert mode
 			float height = 10.0f;
-			Vector3dT cp = m_view->m_cam.mPos + (st*5);
-			CCylinderAD *cyl = new CCylinderAD(m_sim, _R(1.0), height, _R(30.0));
-			//dir.y = 2.5f; // stand on the ground
-			cp.y = max(height/2, cp.y);
-			cyl->SetPosition(cp); // 3.5 because (5.0 + 2.0f = 7.0) / 2 - cap's size is radius
+			Vector3dT cp = m_view->m_cam.mPos + (st*5); // move away from camera
+			cp.y = max(height/2, cp.y); // stand on ground or fall
+			
+			switch (m_insert_kind)
+			{
+			case EInsertKind::insertCylinder:
+				{
+					CCylinderAD *cyl = new CCylinderAD(m_sim, _R(1.0), height, _R(30.0));
+					cyl->SetPosition(cp); 
+				}
+				break;
+			default:
+			case EInsertKind::insertBox:
+				{
+					CODEBox *box = new CODEBox(m_sim, _R(1.0), height, _R(1.0), _R(10.0));
+					box->SetPosition(cp);
+				}
+				break;
+			}
 			m_LPM = false;
 		}
 	}
@@ -86,9 +101,10 @@ void CSimController::DoFrame()
 	{
 		Vector3dT cv;
 		m_attached->GetLinearVel(cv);
+
 		if((now - last_snake > 10000) || cv.Magnitude() < _R(1.0))
 		{
-			float da = rand()%30+1;
+			float da = rand()%20+1;
 			an += da;
 			cp = (Vector3dT(
 				sin(an),
@@ -172,6 +188,7 @@ void CSimController::StartSimulation()
 	br.CreateFromAxisAngle(_R(0.0), _R(0.0), _R(1.0), _R(90.0));
 	box->SetRotation(br);
 
+	// snake of chaos
 	/*int NUM_BALLS = 20;
 
 	CODEObj *fball = new CODEBox(m_sim, _R(0.6), _R(0.6),_R(0.6),_R(1.0));
@@ -238,6 +255,14 @@ void CSimController::OnKeyDown(char key)
 		m_insert_mode = !m_insert_mode;
 	END
 	
+	ON_KEY_ONCE('B')
+		m_insert_kind = EInsertKind::insertBox;
+	END
+
+	ON_KEY_ONCE('C')
+		m_insert_kind = EInsertKind::insertCylinder;
+	END
+
 	ON_KEY_ONCE('R')
 		m_sim.RemoveAll();
 	END
